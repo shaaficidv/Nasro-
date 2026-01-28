@@ -1,59 +1,46 @@
-# Nasro-
-# 🤖 Discord Moderation & Ticket System (Nasro Bot)
 
-Bot-kan waa nidaam dhammaystiran oo loogu talagalay maamulka server-ka (Moderation), soo dhawaynta (Welcome System), iyo caawinaada macaamiisha (Ticket System).
+# 🛡️ Nasro Moderation Bot
 
-## 🚀 Sida loo rakibo (Setup)
-1. Ku shub faylasha `bot.py` ama `bot2.py` GitHub.
-2. Ku xir Kinesis Cloud.
-3. Geli Token-ka bot-ka qaybta `DISCORD_TOKEN`.
-4. Startup Command ka dhig: `python bot.py`.
+Bot-kani waa nidaam dhammaystiran oo loogu talagalay maamulka server-ka iyo soo dhawaynta macaamiisha cusub.
 
 ---
 
-## 🛠️ Bot 1: Amarrada Maamulka (Moderation & Welcome)
+### 💻 Built With (Luqadaha Coding-ka)
+Bot-kan waxaa lagu dhisay tignoolajiyada hoos ku qoran:
 
-Dhammaan amarradan waa **Ephemeral** (Adiga kaliya ayaa arki kara fariinta bot-ka).
-
-| Amar (Command) | Sharraxaad (Description) |
-| :--- | :--- |
-| `/kick` | User-ka ka saar server-ka. |
-| `/ban` | User-ka ka mamnuuc server-ka. |
-| `/timeout` | User-ka aamusii (Mute) muddo cayiman. |
-| `/lock` | Xir channel-ka si aan wax looga qorin. |
-| `/unlock` | Fur channel-ka xirnaa. |
-| `/slowmode` | Saar xawaaraha qoraalka (Seconds). |
-| `/slowmodeoff` | Ka qaad slowmode-ka channel-ka. |
-| `/setwelcome` | Habee fariinta soo dhawaynta ee **Embed** ah. |
-| `/invite` | Hel badanka casuumada bot-ka. |
-| `/help` | Fiiri liiska amarrada iyo GitHub. |
+* ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) **Python** * ![Discord.py](https://img.shields.io/badge/discord.py-5865F2?style=for-the-badge&logo=discord&logoColor=white) **Discord.py** * ![JSON](https://img.shields.io/badge/json-5E5E5E?style=for-the-badge&logo=json&logoColor=white) **JSON Database**
 
 ---
 
-## 🎫 Bot 2: Amarrada Ticket & Games
+### 🛠️ Amarrada Maamulka (Moderation Commands)
+*Dhammaan amarradan waa **Ephemeral** (Adiga kaliya ayaa arki kara).*
 
-Bot-kani wuxuu u gaar yahay caawinaada iyo madadaalada.
-
-| Amar (Command) | Sharraxaad (Description) |
-| :--- | :--- |
-| `/tick` | Dhig badanka lagu furo Ticket-ka (Private Channel). |
-| `/game` | Dhig badanka lagu kiciyo ciyaaraha Discord. |
-| `/points` | Fiiri qofka ugu dhibcaha badan server-ka. |
-
----
-
-## 📢 DM Auto-Response
-Haddii qofka uu DM (Fariin gaar ah) u soo diro bot-ka, bot-ku wuxuu ugu jawaabayaa:
-> "Hi {user} I'm Bot. Please use / This I'm Working!"
-Waxaa kale oo la socda labo badan (Buttons):
-1. **Add Server**: Si bot-ka loogu daro server kale.
-2. **Contact Team**: Si loola xiriiro kooxda farsamada.
+| Icon | Amar (Command) | Shaqada (Action) |
+| :--- | :--- | :--- |
+| 🛡️ | `/kick` | User-ka ka saar server-ka. |
+| 🚫 | `/ban` | User-ka ka mamnuuc server-ka si joogto ah. |
+| ⏳ | `/timeout` | User-ka ka aamusii server-ka. |
+| 🔒 | `/lock` | Xiridda channel-ka (Silence). |
+| 🔓 | `/unlock` | Furista channel-ka xirnaa. |
+| ⏲️ | `/slowmode` | Saaridda xawaaraha qoraalka. |
+| ⏲️ | `/slowmodeoff` | Ka qaadista slowmode-ka. |
+| 🎉 | `/setwelcome` | Habee fariinta soo dhawaynta ee **Embed** ah. |
+| 🌍 | `/invite` | Hel badanka casuumada bot-ka. |
+| 📖 | `/help` | Helitaanka menu-ka caawinaada. |
 
 ---
 
-## ⚙️ Shuruudaha (Requirements)
-* `discord.py`
-* `asyncio`
+### 💬 DM Auto-Response
+Marka bot-ka DM loogu diro fariin:
+* **Message**: `Hi {user} I'm Bot. Please use / This I'm Working!`
+* **Buttons**: `Add Server 🌍` | `Contact Team 👤`
 
 ---
+
+### 🚀 Setup & Deployment
+1. **GitHub**: Ku shub `bot.py` iyo `requirements.txt`.
+2. **Kinesis Cloud**: Connect GitHub Repo.
+3. **Variable**: Ku dar `DISCORD_TOKEN`.
+4. **Run**: Isticmaal amarka `python bot.py`.
+
 **Developed by:** [shaaficidv](https://github.com/shaaficidv/Nasro-.git)
