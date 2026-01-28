@@ -1,4 +1,3 @@
-
 # 🛡️ Nasro Moderation Bot
 
 Bot-kani waa nidaam dhammaystiran oo loogu talagalay maamulka server-ka iyo soo dhawaynta macaamiisha cusub.
@@ -6,9 +5,19 @@ Bot-kani waa nidaam dhammaystiran oo loogu talagalay maamulka server-ka iyo soo 
 ---
 
 ### 💻 Built With (Luqadaha Coding-ka)
-Bot-kan waxaa lagu dhisay tignoolajiyada hoos ku qoran:
+<p align="left">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white&logoSize=amg" alt="Python" style="border-radius: 50px;"/>
+  <img src="https://img.shields.io/badge/Discord.py-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord.py" />
+  <img src="https://img.shields.io/badge/JSON-000000?style=for-the-badge&logo=json&logoColor=white" alt="JSON" />
+</p>
 
-* ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) **Python** * ![Discord.py](https://img.shields.io/badge/discord.py-5865F2?style=for-the-badge&logo=discord&logoColor=white) **Discord.py** * ![JSON](https://img.shields.io/badge/json-5E5E5E?style=for-the-badge&logo=json&logoColor=white) **JSON Database**
+---
+
+### 👤 Developer & Contact
+Halkan kala xiriir horumariyaha bot-kan:
+
+[<img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" height="40">](https://discord.com/users/1388255325345419409)
+[<img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" height="40">](https://github.com/shaaficidv/shaaficidv.git)
 
 ---
 
@@ -16,14 +25,12 @@ Bot-kan waxaa lagu dhisay tignoolajiyada hoos ku qoran:
 *Dhammaan amarradan waa **Ephemeral** (Adiga kaliya ayaa arki kara).*
 
 | Icon | Amar (Command) | Shaqada (Action) |
-| :--- | :--- | :--- |
+| :---: | :--- | :--- |
 | 🛡️ | `/kick` | User-ka ka saar server-ka. |
-| 🚫 | `/ban` | User-ka ka mamnuuc server-ka si joogto ah. |
+| 🚫 | `/ban` | User-ka ka mamnuuc server-ka. |
 | ⏳ | `/timeout` | User-ka ka aamusii server-ka. |
 | 🔒 | `/lock` | Xiridda channel-ka (Silence). |
 | 🔓 | `/unlock` | Furista channel-ka xirnaa. |
-| ⏲️ | `/slowmode` | Saaridda xawaaraha qoraalka. |
-| ⏲️ | `/slowmodeoff` | Ka qaadista slowmode-ka. |
 | 🎉 | `/setwelcome` | Habee fariinta soo dhawaynta ee **Embed** ah. |
 | 🌍 | `/invite` | Hel badanka casuumada bot-ka. |
 | 📖 | `/help` | Helitaanka menu-ka caawinaada. |
@@ -43,4 +50,5 @@ Marka bot-ka DM loogu diro fariin:
 3. **Variable**: Ku dar `DISCORD_TOKEN`.
 4. **Run**: Isticmaal amarka `python bot.py`.
 
-**Developed by:** [shaaficidv](https://github.com/shaaficidv/Nasro-.git)
+---
+**Developed with ❤️ by [shaaficidv](https://github.com/shaaficidv/shaaficidv.git)**
