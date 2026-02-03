@@ -52,6 +52,41 @@ async def msg(interaction: discord.Interaction, message: str, channel: Optional[
     else:
         await interaction.response.send_message("Fadlan dooro Channel ama User midkood!", ephemeral=True)
 
+
+# --- DM AUTO-RESPONSE CODE ONLY ---
+
+@bot.event
+async def on_message(message):
+    # In bot-ku uusan isagu isu jawaabin
+    if message.author == bot.user:
+        return
+
+    # Haddii fariintu tahay mid gaar ah (DM)
+    if isinstance(message.channel, discord.DMChannel):
+        # Sameynta Embed-ka
+        embed = discord.Embed(
+            title="Nagti Shaafici Support ℹ️",
+            description=f"Hi **{message.author.name}**, How are You Today?\n\nPlease use `/` I'm Working!",
+            color=discord.Color.blue()
+        )
+        
+        # Sameynta Buttons-ka
+        view = discord.ui.View()
+        
+        # 1. Button-ka Add Server
+        invite_url = f"https://discord.com/api/oauth2/authorize?client_id={bot.user.id}&permissions=8&scope=bot%20applications.commands"
+        view.add_item(discord.ui.Button(label="Add +", url=invite_url, style=discord.ButtonStyle.link))
+        
+        # 2. Button-ka Contact Team
+        view.add_item(discord.ui.Button(label="Content Team", url="https://discord.com/users/1388255325345419409", style=discord.ButtonStyle.link))
+        
+        # Dirista fariinta
+        await message.channel.send(embed=embed, view=view)
+
+    # Si amarrada kale (Slash commands) u shaqeeyaan
+    await bot.process_commands(message)
+    
+
 # --- 2. MODERATION COMMANDS ---
 
 @bot.tree.command(name="kick", description="User ka saar server-ka")
