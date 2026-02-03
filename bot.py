@@ -145,6 +145,6 @@ async def invite(interaction: discord.Interaction):
 async def help_cmd(interaction: discord.Interaction):
     view = discord.ui.View()
     view.add_item(discord.ui.Button(label="GitHub 📂", url="https://github.com/shaaficidv/Nasro-.git"))
-    await interaction.response.send_message("Dhammaan amarrada maamulka waxaa isticmaali kara oo kaliya Administrator.", view=view, ephemeral=True)
+    await interaction.response.send_message("comatis /help menu /setwelcom Set up Bot /kick kick User /lock Lock Chnala /unlock Unlock Chnala / Msg Send Meseeg User or Chnala /slowmode Set slowmode /Slowmodeoff Off slowmode  /timeout user timeout /invite add Bot Your Sever /ban Ban User one Sever isticmala Ruleka @ administorq.", view=view, ephemeral=True)
 
 bot.run(TOKEN)
