@@ -4,8 +4,8 @@ from discord import app_commands
 import os
 import json
 from datetime import timedelta
+from typing import Optional
 
-# Token-ka waxaa laga akhrinayaa Environment Variables
 TOKEN = os.environ.get("DISCORD_TOKEN")
 WELCOME_FILE = "welcome_settings.json"
 
@@ -33,99 +33,66 @@ class MyBot(commands.Bot):
 
 bot = MyBot()
 
-# --- 1. DM AUTO-RESPONSE (EMBED) ---
+# --- 1. DM AUTO-RESPONSE ---
 @bot.event
 async def on_message(message):
     if message.author == bot.user: return
-    
     if isinstance(message.channel, discord.DMChannel):
         embed = discord.Embed(
             title="Nagti Shaafici Support Center 🛠️",
-            description=f"Hi **{message.author.name}**, I'm Bot\nPlease use / This I'm Working!",
+            description=f"Hi **{message.author.name}**, I'm Bot\nPlease use `/` This I'm Working!",
             color=discord.Color.blue()
         )
         view = discord.ui.View()
         invite_url = f"https://discord.com/api/oauth2/authorize?client_id={bot.user.id}&permissions=8&scope=bot%20applications.commands"
         view.add_item(discord.ui.Button(label="Add Server 🌍", url=invite_url))
         view.add_item(discord.ui.Button(label="Contact Team 👤", url="https://discord.com/users/1388255325345419409"))
-        
         await message.channel.send(embed=embed, view=view)
 
-# --- 2. WELCOME SYSTEM (EMBED) ---
-@bot.event
-async def on_member_join(member):
-    data = load_welcome()
-    g_data = data.get(str(member.guild.id))
-    if g_data:
-        channel = bot.get_channel(g_data["channel"])
-        if channel:
-            msg_content = g_data["message"].replace("{user}", member.mention).replace("{server}", member.guild.name)
-            embed = discord.Embed(
-                title="Welcome to the Server! 🎉",
-                description=msg_content,
-                color=discord.Color.green()
-            )
-            embed.set_thumbnail(url=member.display_avatar.url)
-            embed.set_footer(text=f"Member #{member.guild.member_count}")
-            await channel.send(embed=embed)
+# --- 2. THE NEW /MSG COMMAND ---
+@bot.tree.command(name="msg", description="Fariin Embed ah u dir Channel ama User")
+@app_commands.describe(channel="Channel-ka fariinta lagu dirayo", user="User-ka la mention-gareeyo", message="Fariintaada")
+async def msg(interaction: discord.Interaction, message: str, channel: Optional[discord.TextChannel] = None, user: Optional[discord.Member] = None):
+    if not interaction.user.guild_permissions.administrator:
+        return await interaction.response.send_message("❌ **Fadlan @administrator Kaliya Aya I Mamuli Karo Mahdsanid ℹ️**", ephemeral=True)
 
-# --- 3. MODERATION COMMANDS (EPHEMERAL) ---
+    embed = discord.Embed(description=message, color=discord.Color.random())
+    
+    if channel:
+        await channel.send(embed=embed)
+        await interaction.response.send_message(f"✅ Fariintaada waxaa lagu diray {channel.mention}", ephemeral=True)
+    elif user:
+        await interaction.channel.send(content=f"{user.mention}", embed=embed)
+        await interaction.response.send_message(f"✅ Fariintaada waxaa loo tag-gareeyay {user.name}", ephemeral=True)
+    else:
+        await interaction.response.send_message("Fadlan dooro Channel ama User midkood!", ephemeral=True)
+
+# --- 3. MODERATION COMMANDS (WITH PERMISSION MESSAGE) ---
 
 @bot.tree.command(name="kick", description="User ka saar server-ka")
-@app_commands.checks.has_permissions(kick_members=True)
 async def kick(interaction: discord.Interaction, user: discord.Member, reason: str = "Lama sheegin"):
+    if not interaction.user.guild_permissions.kick_members:
+        return await interaction.response.send_message("❌ **Fadlan @administrator Kaliya Aya I Mamuli Karo Mahdsanid ℹ️**", ephemeral=True)
     await user.kick(reason=reason)
     await interaction.response.send_message(f"✅ **{user.name}** waa la kick-gareeyay.", ephemeral=True)
 
 @bot.tree.command(name="ban", description="User ka mamnuuc server-ka")
-@app_commands.checks.has_permissions(ban_members=True)
 async def ban(interaction: discord.Interaction, user: discord.Member, reason: str = "Lama sheegin"):
+    if not interaction.user.guild_permissions.ban_members:
+        return await interaction.response.send_message("❌ **Fadlan @administrator Kaliya Aya I Mamuli Karo Mahdsanid ℹ️**", ephemeral=True)
     await user.ban(reason=reason)
     await interaction.response.send_message(f"🚫 **{user.name}** waa la ban-gareeyay.", ephemeral=True)
 
-@bot.tree.command(name="timeout", description="User-ka aamusii")
-@app_commands.checks.has_permissions(moderate_members=True)
-async def timeout(interaction: discord.Interaction, user: discord.Member, minutes: int):
-    await user.timeout(timedelta(minutes=minutes))
-    await interaction.response.send_message(f"⏳ **{user.name}** timeout {minutes} min.", ephemeral=True)
-
-# --- 4. CHANNEL CONTROL (EPHEMERAL) ---
-
 @bot.tree.command(name="lock", description="Xir channel-ka")
-@app_commands.checks.has_permissions(manage_channels=True)
 async def lock(interaction: discord.Interaction, channel: discord.TextChannel):
+    if not interaction.user.guild_permissions.manage_channels:
+        return await interaction.response.send_message("❌ **Fadlan @administrator Kaliya Aya I Mamuli Karo Mahdsanid ℹ️**", ephemeral=True)
     overwrite = channel.overwrites_for(interaction.guild.default_role)
     overwrite.send_messages = False
     await channel.set_permissions(interaction.guild.default_role, overwrite=overwrite)
     await interaction.response.send_message(f"🔒 {channel.mention} waa la xiray.", ephemeral=True)
 
-@bot.tree.command(name="unlock", description="Fur channel-ka")
-@app_commands.checks.has_permissions(manage_channels=True)
-async def unlock(interaction: discord.Interaction, channel: discord.TextChannel):
-    overwrite = channel.overwrites_for(interaction.guild.default_role)
-    overwrite.send_messages = True
-    await channel.set_permissions(interaction.guild.default_role, overwrite=overwrite)
-    await interaction.response.send_message(f"🔓 {channel.mention} waa la furay.", ephemeral=True)
-
-@bot.tree.command(name="slowmode", description="Saar slowmode")
-async def slowmode(interaction: discord.Interaction, seconds: int):
-    await interaction.channel.edit(slowmode_delay=seconds)
-    await interaction.response.send_message(f"⏲️ Slowmode: {seconds}s", ephemeral=True)
-
-@bot.tree.command(name="slowmodeoff", description="Ka qaad slowmode")
-async def slowmodeoff(interaction: discord.Interaction):
-    await interaction.channel.edit(slowmode_delay=0)
-    await interaction.response.send_message("✅ Slowmode off.", ephemeral=True)
-
-# --- 5. SETUP & HELP ---
-
-@bot.tree.command(name="setwelcome", description="Habee welcome embed ah")
-@app_commands.checks.has_permissions(administrator=True)
-async def setwelcome(interaction: discord.Interaction, channel: discord.TextChannel, message: str):
-    data = load_welcome()
-    data[str(interaction.guild.id)] = {"channel": channel.id, "message": message}
-    save_welcome(data)
-    await interaction.response.send_message(f"✅ Welcome Embed-ka waa la dhigay {channel.mention}", ephemeral=True)
+# --- 4. HELP & INVITE ---
 
 @bot.tree.command(name="invite", description="Casuun bot-ka")
 async def invite(interaction: discord.Interaction):
