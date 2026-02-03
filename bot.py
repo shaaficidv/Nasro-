@@ -3,10 +3,10 @@ from discord.ext import commands
 from discord import app_commands
 import os
 import json
+import asyncio
 from datetime import timedelta
 from typing import Optional
 
-# Token-ka waxaa laga akhrinayaa Environment Variables
 TOKEN = os.environ.get("DISCORD_TOKEN")
 WELCOME_FILE = "welcome_settings.json"
 
@@ -34,61 +34,56 @@ class MyBot(commands.Bot):
 
 bot = MyBot()
 
-# --- 1. THE /MSG COMMAND (ADMIN ONLY) ---
+# --- 1. DM AUTO-RESPONSE & DOUBLE MSG FIX ---
+@bot.event
+async def on_message(message):
+    if message.author == bot.user: 
+        return # Kani wuxuu xallinayaa labada fariin (Double Message)
+
+    if isinstance(message.channel, discord.DMChannel):
+        embed = discord.Embed(
+            title="Nagti Shaafici Support ℹ️",
+            description=f"Hi **{message.author.name}**, How are You Today?\n\nPlease use `/` I'm Working!",
+            color=discord.Color.blue()
+        )
+        view = discord.ui.View()
+        invite_url = f"https://discord.com/api/oauth2/authorize?client_id={bot.user.id}&permissions=8&scope=bot%20applications.commands"
+        view.add_item(discord.ui.Button(label="Add +", url=invite_url, style=discord.ButtonStyle.link))
+        view.add_item(discord.ui.Button(label="Content Team", url="https://discord.com/users/1388255325345419409", style=discord.ButtonStyle.link))
+        
+        await message.channel.send(embed=embed, view=view)
+        return
+
+    await bot.process_commands(message)
+
+# --- 2. THE CLEAN COMMAND (AMARKA 12-AAD) ---
+@bot.tree.command(name="clean", description="Tirtir fariimaha channel-ka")
+@app_commands.describe(amount="Inta fariin ee la tirtirayo", channel="Channel-ka la nadiifinayo")
+async def clean(interaction: discord.Interaction, amount: int, channel: Optional[discord.TextChannel] = None):
+    if not interaction.user.guild_permissions.manage_messages:
+        return await interaction.response.send_message("❌ **Fadlan @administrator Kaliya Aya I Mamuli Karo Mahdsanid ℹ️**", ephemeral=True)
+    
+    target_channel = channel or interaction.channel
+    await interaction.response.send_message(f"🧹 Nadiifinaya {amount} fariimaha ee {target_channel.mention}...", ephemeral=True)
+    
+    deleted = await target_channel.purge(limit=amount)
+    await interaction.channel.send(f"✅ Waxaa lagu guuleystay in la tirtiro {len(deleted)} fariimood oo ku jiray {target_channel.mention}.", delete_after=5)
+
+# --- 3. THE /MSG COMMAND ---
 @bot.tree.command(name="msg", description="Fariin Embed ah u dir Channel ama User")
-@app_commands.describe(channel="Channel-ka fariinta lagu dirayo", user="User-ka la mention-gareeyo", message="Fariintaada")
 async def msg(interaction: discord.Interaction, message: str, channel: Optional[discord.TextChannel] = None, user: Optional[discord.Member] = None):
     if not interaction.user.guild_permissions.administrator:
         return await interaction.response.send_message("❌ **Fadlan @administrator Kaliya Aya I Mamuli Karo Mahdsanid ℹ️**", ephemeral=True)
 
     embed = discord.Embed(description=message, color=discord.Color.blue())
-    
     if channel:
         await channel.send(embed=embed)
         await interaction.response.send_message(f"✅ Fariintaada waxaa lagu diray {channel.mention}", ephemeral=True)
     elif user:
         await interaction.channel.send(content=f"{user.mention}", embed=embed)
         await interaction.response.send_message(f"✅ Fariintaada waxaa loo tag-gareeyay {user.name}", ephemeral=True)
-    else:
-        await interaction.response.send_message("Fadlan dooro Channel ama User midkood!", ephemeral=True)
 
-
-# --- DM AUTO-RESPONSE CODE ONLY ---
-
-@bot.event
-async def on_message(message):
-    # In bot-ku uusan isagu isu jawaabin
-    if message.author == bot.user:
-        return
-
-    # Haddii fariintu tahay mid gaar ah (DM)
-    if isinstance(message.channel, discord.DMChannel):
-        # Sameynta Embed-ka
-        embed = discord.Embed(
-            title="Nagti Shaafici Support ℹ️",
-            description=f"Hi **{message.author.name}**, How are You Today?\n\nPlease use `/` I'm Working!",
-            color=discord.Color.blue()
-        )
-        
-        # Sameynta Buttons-ka
-        view = discord.ui.View()
-        
-        # 1. Button-ka Add Server
-        invite_url = f"https://discord.com/api/oauth2/authorize?client_id={bot.user.id}&permissions=8&scope=bot%20applications.commands"
-        view.add_item(discord.ui.Button(label="Add +", url=invite_url, style=discord.ButtonStyle.link))
-        
-        # 2. Button-ka Contact Team
-        view.add_item(discord.ui.Button(label="Content Team", url="https://discord.com/users/1388255325345419409", style=discord.ButtonStyle.link))
-        
-        # Dirista fariinta
-        await message.channel.send(embed=embed, view=view)
-
-    # Si amarrada kale (Slash commands) u shaqeeyaan
-    await bot.process_commands(message)
-    
-
-# --- 2. MODERATION COMMANDS ---
-
+# --- 4. MODERATION COMMANDS ---
 @bot.tree.command(name="kick", description="User ka saar server-ka")
 async def kick(interaction: discord.Interaction, user: discord.Member, reason: str = "Lama sheegin"):
     if not interaction.user.guild_permissions.kick_members:
@@ -110,8 +105,7 @@ async def timeout(interaction: discord.Interaction, user: discord.Member, minute
     await user.timeout(timedelta(minutes=minutes))
     await interaction.response.send_message(f"⏳ **{user.name}** timeout {minutes} min.", ephemeral=True)
 
-# --- 3. CHANNEL CONTROL ---
-
+# --- 5. CHANNEL CONTROL ---
 @bot.tree.command(name="lock", description="Xir channel-ka")
 async def lock(interaction: discord.Interaction, channel: discord.TextChannel):
     if not interaction.user.guild_permissions.manage_channels:
@@ -140,12 +134,11 @@ async def slowmode(interaction: discord.Interaction, seconds: int):
 @bot.tree.command(name="slowmodeoff", description="Ka qaad slowmode")
 async def slowmodeoff(interaction: discord.Interaction):
     if not interaction.user.guild_permissions.manage_channels:
-        return await interaction.response.send_message("❌ **Fadlan @administor Kaliya Aya I Mamuli Karo Mahdsanid ℹ️**", ephemeral=True)
+        return await interaction.response.send_message("❌ **Fadlan @administrator Kaliya Aya I Mamuli Karo Mahdsanid ℹ️**", ephemeral=True)
     await interaction.channel.edit(slowmode_delay=0)
     await interaction.response.send_message("✅ Slowmode off.", ephemeral=True)
 
-# --- 4. WELCOME & EVENTS ---
-
+# --- 6. WELCOME & HELP ---
 @bot.event
 async def on_member_join(member):
     data = load_welcome()
@@ -161,13 +154,11 @@ async def on_member_join(member):
 @bot.tree.command(name="setwelcome", description="Habee welcome embed ah")
 async def setwelcome(interaction: discord.Interaction, channel: discord.TextChannel, message: str):
     if not interaction.user.guild_permissions.administrator:
-        return await interaction.response.send_message("❌ **Fadlan @administor Kaliya Aya I Mamuli Karo Mahdsanid ℹ️**", ephemeral=True)
+        return await interaction.response.send_message("❌ **Fadlan @administrator Kaliya Aya I Mamuli Karo Mahdsanid ℹ️**", ephemeral=True)
     data = load_welcome()
     data[str(interaction.guild.id)] = {"channel": channel.id, "message": message}
     save_welcome(data)
-    await interaction.response.send_message(f"✅ Welcome Embed-ka waa la dhigay {channel.mention}", ephemeral=True)
-
-# --- 5. HELP & UTILITY ---
+    await interaction.response.send_message(f"✅ Welcome lagu dhigay {channel.mention}", ephemeral=True)
 
 @bot.tree.command(name="invite", description="Casuun bot-ka")
 async def invite(interaction: discord.Interaction):
@@ -180,6 +171,12 @@ async def invite(interaction: discord.Interaction):
 async def help_cmd(interaction: discord.Interaction):
     view = discord.ui.View()
     view.add_item(discord.ui.Button(label="GitHub 📂", url="https://github.com/shaaficidv/Nasro-.git"))
-    await interaction.response.send_message("comatis /help menu /setwelcom Set up Bot /kick kick User /lock Lock Chnala /unlock Unlock Chnala / Msg Send Meseeg User or Chnala /slowmode Set slowmode /Slowmodeoff Off slowmode  /timeout user timeout /invite add Bot Your Sever /ban Ban User one Sever isticmala Ruleka @ administor Si aan Kugu shaqeyo ? 🇸🇴.", view=view, ephemeral=True)
+    msg = "📜 **Bot Help Menu (12 Amarrada):**\n" \
+          "1. `/help` - Menu\n2. `/setwelcome` - Setup Welcome\n3. `/kick` - Kick User\n" \
+          "4. `/ban` - Ban User\n5. `/timeout` - Timeout\n6. `/lock` - Lock Channel\n" \
+          "7. `/unlock` - Unlock Channel\n8. `/msg` - Message Channel/User\n" \
+          "9. `/slowmode` - Set Slowmode\n10. `/slowmodeoff` - Off Slowmode\n" \
+          "11. `/clean` - Purge Messages\n12. `/invite` - Add Bot"
+    await interaction.response.send_message(msg, view=view, ephemeral=True)
 
 bot.run(TOKEN)
