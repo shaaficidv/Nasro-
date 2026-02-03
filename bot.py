@@ -105,7 +105,7 @@ async def slowmode(interaction: discord.Interaction, seconds: int):
 @bot.tree.command(name="slowmodeoff", description="Ka qaad slowmode")
 async def slowmodeoff(interaction: discord.Interaction):
     if not interaction.user.guild_permissions.manage_channels:
-        return await interaction.response.send_message("❌ **Fadlan @administrator Kaliya Aya I Mamuli Karo Mahdsanid ℹ️**", ephemeral=True)
+        return await interaction.response.send_message("❌ **Fadlan @administor Kaliya Aya I Mamuli Karo Mahdsanid ℹ️**", ephemeral=True)
     await interaction.channel.edit(slowmode_delay=0)
     await interaction.response.send_message("✅ Slowmode off.", ephemeral=True)
 
@@ -126,7 +126,7 @@ async def on_member_join(member):
 @bot.tree.command(name="setwelcome", description="Habee welcome embed ah")
 async def setwelcome(interaction: discord.Interaction, channel: discord.TextChannel, message: str):
     if not interaction.user.guild_permissions.administrator:
-        return await interaction.response.send_message("❌ **Fadlan @administrator Kaliya Aya I Mamuli Karo Mahdsanid ℹ️**", ephemeral=True)
+        return await interaction.response.send_message("❌ **Fadlan @administor Kaliya Aya I Mamuli Karo Mahdsanid ℹ️**", ephemeral=True)
     data = load_welcome()
     data[str(interaction.guild.id)] = {"channel": channel.id, "message": message}
     save_welcome(data)
@@ -145,6 +145,6 @@ async def invite(interaction: discord.Interaction):
 async def help_cmd(interaction: discord.Interaction):
     view = discord.ui.View()
     view.add_item(discord.ui.Button(label="GitHub 📂", url="https://github.com/shaaficidv/Nasro-.git"))
-    await interaction.response.send_message("comatis /help menu /setwelcom Set up Bot /kick kick User /lock Lock Chnala /unlock Unlock Chnala / Msg Send Meseeg User or Chnala /slowmode Set slowmode /Slowmodeoff Off slowmode  /timeout user timeout /invite add Bot Your Sever /ban Ban User one Sever isticmala Ruleka @ administorq.", view=view, ephemeral=True)
+    await interaction.response.send_message("comatis /help menu /setwelcom Set up Bot /kick kick User /lock Lock Chnala /unlock Unlock Chnala / Msg Send Meseeg User or Chnala /slowmode Set slowmode /Slowmodeoff Off slowmode  /timeout user timeout /invite add Bot Your Sever /ban Ban User one Sever isticmala Ruleka @ administor Si aan Kugu shaqeyo ? 🇸🇴.", view=view, ephemeral=True)
 
 bot.run(TOKEN)
